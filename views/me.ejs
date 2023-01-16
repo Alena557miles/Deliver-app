@@ -1,0 +1,67 @@
+<%- include('./partials/head.ejs') %>
+<%- include('./partials/header.ejs') %>
+<% if (user.role === "SHIPPER") {%>
+    <%- include('./partials/nav_shipper.ejs') %>
+    <% } else { %>
+        <%- include('./partials/nav_driver.ejs') %>
+    <% } %>
+<div class="me-container">
+    <a class="button delete" data-doc="<%= user._id %>">
+        <img src="/trash.svg" alt="delete icon">
+    </a>
+    <table>
+        <thead>
+            <tr>
+            <th>USER:</th>
+            <th></th>
+            <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- <tr>
+                <td></td>
+                <td class="font-W">_id</td>
+                <td><%= user._id %></td>
+            </tr> -->
+            <tr>
+                <td></td>
+                <td class="font-W">role</td>
+                <td><%= user.role %></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="font-W">email</td>
+                <td><%= user.email %></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td class="font-W">created_date</td>
+                <td><%= user.createdDate %></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td>
+                    <a href="me/password" class="change-pass button" data-doc="<%= user._id %>">change password</a>
+                </td>
+                <td></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<%- include('./partials/footer.ejs') %>
+<script>
+    const deleteBtn = document.querySelector('a.delete');
+    console.log(deleteBtn.dataset.doc)
+    deleteBtn.addEventListener('click', (e) => {
+    const endpoint = `/api/users/me/`;
+    fetch(endpoint, {
+        method: 'DELETE',
+    })
+    .then(response => response.json())
+    .then(data => window.location.href = data.redirect)
+    .catch(err => console.log(err));
+    });
+
+    
+</script>
+

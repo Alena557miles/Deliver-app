@@ -1,0 +1,139 @@
+<%- include('./partials/head.ejs') %>
+<%- include('./partials/header.ejs') %>
+<% if (user.role === "SHIPPER") {%>
+    <%- include('./partials/nav_shipper.ejs') %>
+    <% } else { %>
+        <%- include('./partials/nav_driver.ejs') %>
+    <% } %>
+<div class="container">
+    <h2>truck</h2>
+    <% if (user.role === "DRIVER" && truck.status === "IS" ) {%>
+        <a class="button delete" data-doc="<%= truck._id %>">
+            <img src="/trash.svg" alt="delete icon">
+        </a>
+    <% } %>
+    <ul class="list">
+        <li class="list__item">
+            <table>
+                <thead>
+                    <tr>
+                    <th>TRUCK:</th>
+                    <th></th>
+                    <th>
+                        <% if (user.role === "DRIVER" && truck.status === "IS" ) {%>
+                            <a class="edit" data-doc="<%= truck._id %>">
+                                <img class="edit-icon" src="/edit.svg" alt="edit icon">
+                            </a>
+                        <% } %>
+                    </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">_id</td>
+                        <td><%= truck._id %></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">created_by</td>
+                        <td><%= truck.created_by %></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">assigned_to</td>
+                        <% if (truck.assigned_to === null) { %>
+                            <td>
+                                <button type="click" class="assign" data-doc="<%= truck._id %>">assign to me</button>
+                            </td>
+                        <% } else {%>
+                            <td><%= truck.assigned_to %></td>
+                        <% } %>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">type</td>
+                        <td class="typeTruck" data-doc="<%= truck._id %>"><%= truck.type %></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">status</td>
+                        <td><%= truck.status %></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">created_date</td>
+                        <td><%= truck.createdDate %></td>
+                    </tr>
+                </tbody>
+            </table>
+        </li>
+    </ul>
+</div>
+
+
+<script>    
+// Delete user's truck by id (available only for driver role) 
+    const deleteBtn = document.querySelector('a.delete');
+    if (deleteBtn){
+        deleteBtn.addEventListener('click', (e) => {
+        const endpoint = `/api/trucks/${deleteBtn.dataset.doc}`;
+        fetch(endpoint, {
+            method: 'DELETE',
+        })
+        .then(response => response.json())
+        .then(data => window.location.href = data.redirect)
+        .catch(err => console.log(err));
+        });
+    }
+
+// Assign truck to user by id (available only for driver role)
+    const assignBtn = document.querySelector('button.assign');
+    if (assignBtn) {
+        assignBtn.addEventListener('click', () => {
+        const endpoint = `/api/trucks/${assignBtn.dataset.doc}/assign`;
+        fetch(endpoint, {
+            method: 'POST',
+        })
+        .then(response => response.json())
+        .then(data => window.location.href = data.redirect)
+        .catch(err => console.log(err));
+        });
+    }
+
+//  Update user's truck by id (available only for driver role)
+    const typeTruck = document.querySelector('.typeTruck');
+    const editBtn = document.querySelector('a.edit');
+    if (editBtn){
+        editBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        typeTruck.innerHTML = 
+            `<form class="edit-truck" method="PUT" action="/api/trucks/${typeTruck.dataset.doc}">
+                <select name="type" id ="type" class="type">
+                    <option selected  value="role">CHOOSE TYPE OF THE TRUCK</option>
+                    <option value="SPRINTER">SPRINTER</option>
+                    <option value="SMALL STRAIGHT">SMALL STRAIGHT</option>
+                    <option value="LARGE STRAIGHT">LARGE STRAIGHT</option>
+                </select>
+                <button type="submit" id="button" class="button edit-truck-btn">SAVE</button>
+            </form>`;
+        const form = document.querySelector('form');
+        const saveTruckBtn = document.getElementById('button');
+        saveTruckBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            const type = form.type.value;
+            const endpoint = `/api/trucks/${typeTruck.dataset.doc}`;
+            fetch(endpoint, {
+                method: 'PUT',
+                body: JSON.stringify({ type }),
+                headers: {'Content-Type': 'application/json'}
+            })
+                .then(response => response.json())
+                .then(data => window.location.href = data.redirect)
+                .catch(err => console.log(err));
+            });
+        });
+    }  
+</script>
+<%- include('./partials/footer.ejs') %>

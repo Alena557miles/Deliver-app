@@ -1,0 +1,248 @@
+<%- include('./partials/head.ejs') %>
+<%- include('./partials/header.ejs') %>
+
+<% if (user.role === "SHIPPER") {%>
+    <%- include('./partials/nav_shipper.ejs') %>
+    <% } else { %>
+        <%- include('./partials/nav_driver.ejs') %>
+    <% } %>
+<div class="container">
+    <h2>Load</h2>
+    <% if (load.status === 'NEW') { %>
+        <a id="delete" class="button delete" data-doc="<%= load._id %>">
+            <img src="/trash.svg" alt="delete icon">
+        </a>
+    <% } %>
+    <ul class="list">
+        <li class="list__item" data-doc="<%= load._id %>">
+            <table>
+                <thead>
+                    <tr>
+                        <th>LOAD:</th>
+                        <th>
+                        </th>
+                        <th>
+                            <% if (user.role === "SHIPPER" && load.status === "NEW") {%>
+                                <a class="edit" data-doc="<%= load._id %>">
+                                    <img class="edit-icon" src="/edit.svg" alt="edit icon">
+                                </a>
+                            <% } %>
+                            <% if (user.role === "SHIPPER" && !(load.status === "NEW")) {%>
+                                <a href="/api/loads/<%= load._id %>/shipping_info" id="fullinfo" class="full-info-btn button" data-doc="<%= load._id %>">
+                                    get shipment info
+                                </a>
+                            <% } %>
+                            <% if (user.role === "DRIVER" && !(load.status ==="SHIPPED")) {%>
+                                <a id="state" class="state-btn button" data-doc="<%= load._id %>">
+                                    change state
+                                </a>
+                            <% } %>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- <tr>
+                        <td></td>
+                        <td class="font-W">_id</td>
+                        <td><%= load._id %></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">created_by</td>
+                        <td><%= load.created_by %></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">assigned_to</td>
+                        <td><%= load.assigned_to %></td>
+                    </tr> -->
+                    <tr>
+                        <td></td>
+                        <td class="font-W">state</td>
+                        <td id="load-state"><%= load.state %></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">status</td>
+                        <td class="edit-load">
+                            <%= load.status %>
+                            <% if (load.status === 'NEW') { %>
+                            <button id="find-driver-btn" class="button find-driver-btn">find driver</button>
+                            <% } %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">name</td>
+                        <td><%= load.name %></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">payload</td>
+                        <td><%= load.payload %></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">pickup_address</td>
+                        <td><%= load.pickup_address %></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">delivery_address</td>
+                        <td><%= load.delivery_address %></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">dimensions</td>
+                        <td>
+                            width:<%= load.dimensions.width %>; 
+                            length:<%= load.dimensions.length %>; 
+                            height:<%= load.dimensions.height %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">logs</td>
+                        <td>
+                            <% load.logs.forEach(elem => { %>
+                                <%= elem.message%>,<br>
+                                <%= elem.time %> <br>
+                            <%  }) %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">created_date</td>
+                        <td><%= load.createdDate %></td>
+                    </tr>
+                </tbody>
+            </table>
+        </li>
+    </ul>
+</div>
+<%- include('./partials/footer.ejs') %>
+
+<script>
+
+// Delete user's load by id (available only for shipper role) and load's status - "NEW" 
+const deleteBtn = document.querySelector('#delete');
+if (deleteBtn) {
+    deleteBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    const endpoint = `/api/loads/${deleteBtn.dataset.doc}`;
+    fetch(endpoint, {
+            method: 'DELETE',
+        })
+        .then(response => response.json())
+        .then(data => window.location.href = data.redirect)
+        .catch(err => console.log(err));
+    });
+}
+// Update user's load by id (available only for shipper role)
+const list__item = document.querySelector('.list__item');
+const editBtn = document.querySelector('a.edit');
+if (editBtn){
+    editBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    list__item.innerHTML = 
+        `  
+        <form method="PUT" action="/api/loads/${list__item.dataset.doc}">
+            <label for="title" class="form-title">Create a new load</label>
+            <div>
+                <label for="name">name:</label>
+                <input type="name" name="name" value="<%= load.name %>"required>
+            </div>
+            <div>
+                <label for="payload">payload:</label>
+                <input type="payload" name="payload" value="<%= load.payload %>" required>
+            </div>
+            <div>
+                <label for="pickup_address">pickup address:</label>
+                <input type="pickup_address" name="pickup_address" value="<%= load.pickup_address %>" required>
+            </div>
+            <div>
+                <label for="delivery_address">delivery address:</label>
+                <input type="delivery_address" name="delivery_address" value="<%= load.delivery_address %>" required>
+            </div>
+            <div class="dimensions">
+                <label for="dimensions" class="dimensions_title">dimensions</label>
+                <div>
+                    <label for="width">width:</label>
+                    <input type="width" name="width" value="<%= load.dimensions.width %>" required>
+                </div>
+                <div>
+                    <label for="length">length:</label>
+                    <input type="length" name="length" value="<%= load.dimensions.length %>" required>
+                </div>
+                <div>
+                    <label for="height">height:</label>
+                    <input type="height" name="height" value="<%= load.dimensions.height %>" required>
+                </div>
+            </div>
+            <button type="submit" id="button" class="button form-button">SAVE LOAD</button>
+        </form>
+        `;
+    const form = document.querySelector('form');
+    const saveLoadBtn = document.getElementById('button');
+    saveLoadBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        const name = form.name.value;
+        const payload = form.payload.value;
+        const pickup_address = form.pickup_address.value;
+        const delivery_address = form.delivery_address.value;
+        const width = form.width.value;
+        const length = form.length.value;
+        const height = form.height.value;
+
+        const endpoint = `/api/loads/${list__item.dataset.doc}`;
+
+        fetch(endpoint, {
+            method: 'PUT',
+            body: JSON.stringify({ name, payload, pickup_address, delivery_address, dimensions:{  width, length, height } }),
+            headers: {'Content-Type': 'application/json'}
+        })
+            .then(response => response.json())
+            .then(data => window.location.href = data.redirect)
+            .catch(err => console.log(err));
+        });
+    });
+};
+
+//  Post a user's load by id, search for drivers (available only for shipper role)
+const findDriverBtn = document.querySelector('#find-driver-btn');
+if (findDriverBtn){
+    findDriverBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    const endpoint = `/api/loads/${list__item.dataset.doc}/post`;
+    fetch(endpoint, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+    })
+    .then(response => response.json())
+    .then(data => window.location.href = data.redirect)
+    .catch(err => console.log(err));
+    });
+}   
+
+//  Iterate to next Load state(available only for driver)
+const stateBtn = document.querySelector('#state');
+if (stateBtn){
+    stateBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    const stateLoad = document.getElementById('load-state');
+    const state = stateLoad.innerHTML;
+    const endpoint = `/api/loads/active/state`;
+
+    fetch(endpoint, {
+        method: 'PATCH',
+        headers: {'Content-Type': 'application/json'}
+    })
+    .then(response => response.json())
+    .then(data => window.location.href = data.redirect)
+    .catch(err => console.log(err));
+    });
+}  
+
+</script>

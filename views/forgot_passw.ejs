@@ -1,0 +1,15 @@
+    <%- include('./partials/head.ejs') %>
+    <%- include('./partials/header.ejs') %>
+</div>
+<div class="container">
+    <form method="POST" action="#"  class="forgot-password-form">
+        <input type="email" name="email" placeholder="email" required>
+        <button type="submit"  class="button">SEND ME A NEW PASSWORD</button>
+    </form>
+    <% if (text){ %>
+        <div class="info-forgot-pass">
+            <%= text%>
+        </div>
+   <% } %>
+</div>
+<%- include('./partials/footer.ejs') %>

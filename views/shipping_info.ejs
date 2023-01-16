@@ -1,0 +1,145 @@
+<%- include('./partials/head.ejs') %>
+<%- include('./partials/header.ejs') %>
+<%- include('./partials/nav_shipper.ejs') %>
+<div class="container">
+    <h2>Load</h2>
+    <% if (load.status === 'NEW') { %>
+        <a id="delete" class="button delete" data-doc="<%= load._id %>">
+            <img src="/trash.svg" alt="delete icon">
+        </a>
+    <% } %>
+    <ul class="list">
+        <li class="list__item" data-doc="<%= load._id %>">
+            <table>
+                <thead>
+                    <tr>
+                        <th>LOAD:</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">_id</td>
+                        <td><%= load._id %></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">created_by</td>
+                        <td><%= load.created_by %></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">assigned_to</td>
+                        <td><%= load.assigned_to %></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">state</td>
+                        <td><%= load.state %></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">status</td>
+                        <td class="edit-load">
+                            <%= load.status %>
+                            <% if (load.status === 'NEW') { %>
+                            <button id="find-driver-btn" class="button find-driver-btn">find driver</button>
+                            <% } %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">name</td>
+                        <td><%= load.name %></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">payload</td>
+                        <td><%= load.payload %></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">pickup_address</td>
+                        <td><%= load.pickup_address %></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">delivery_address</td>
+                        <td><%= load.delivery_address %></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">dimensions</td>
+                        <td>
+                            width:<%= load.dimensions.width %>; 
+                            length:<%= load.dimensions.length %>; 
+                            height:<%= load.dimensions.height %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">logs</td>
+                        <td>
+                            <% load.logs.forEach(elem => { %>
+                                <br> <%= elem.message%>,<br>
+                                <%= elem.time %> <br>
+                            <%  }) %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">created_date</td>
+                        <td><%= load.createdDate %></td>
+                    </tr>
+                </tbody>
+            </table>
+        </li>
+        <li class="list__item">
+            <table>
+                <thead>
+                    <tr>
+                        <th>TRUCK:</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">_id</td>
+                        <td><%= truck._id %></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">created_by</td>
+                        <td><%= truck.created_by %></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">assigned_to</td>
+                        <td><%= truck.assigned_to %></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">type</td>
+                        <td class="typeTruck" data-doc="<%= truck._id %>"><%= truck.type %></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">status</td>
+                        <td><%= truck.status %></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">created_date</td>
+                        <td><%= truck.createdDate %></td>
+                        </tr>
+                </tbody>
+            </table>
+        </li>
+    </ul>
+</div>
+<%- include('./partials/footer.ejs') %>

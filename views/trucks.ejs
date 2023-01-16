@@ -1,0 +1,79 @@
+<%- include('./partials/head.ejs') %>
+<%- include('./partials/header.ejs') %>
+<% if (user.role === "SHIPPER") {%>
+    <%- include('./partials/nav_shipper.ejs') %>
+    <% } else { %>
+        <%- include('./partials/nav_driver.ejs') %>
+    <% } %>
+<div class="container">
+    <!-- form-adding a new truck  -->
+<form method="POST" action="/api/trucks" class="driver-form">
+    <label for="title">Create a new truck</label>
+    <select name="type" id ="type" class="type">
+        <option selected  value="role">CHOOSE TYPE OF THE TRUCK</option>
+        <option value="SPRINTER">SPRINTER</option>
+        <option value="SMALL STRAIGHT">SMALL STRAIGHT</option>
+        <option value="LARGE STRAIGHT">LARGE STRAIGHT</option>
+    </select>
+    <button type="submit" class="button">SAVE TRUCK</button>
+</form>
+
+<!-- List of all drivers trucks -->
+<div class="container-trucks">
+    <h2>All trucks</h2>
+    <ul class="list">
+    <% if (trucks.length > 0) { %>
+        <% trucks.forEach(truck => { %>
+        <a href="/api/trucks/<%= truck._id %>">
+        <li class="list__item">
+            <table>
+                <thead>
+                    <tr>
+                    <th>TRUCK:</th>
+                    <th></th>
+                    <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">_id</td>
+                        <td><%= truck._id %></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">created_by</td>
+                        <td><%= truck.created_by %></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">assigned_to</td>
+                        <td><%= truck.assigned_to %></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">type</td>
+                        <td><%= truck.type %></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">status</td>
+                        <td><%= truck.status %></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td class="font-W">created_date</td>
+                        <td><%= truck.createdDate %></td>
+                        </tr>
+                </tbody>
+            </table>
+        </li>
+        </a>
+    <% }) %>
+    <% } else {%>
+        <p>There are no trucks to display</p>
+    <% } %>
+    </ul>
+</div>
+</div>
+<%- include('./partials/footer.ejs') %>

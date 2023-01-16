@@ -1,0 +1,148 @@
+<%- include('./partials/head.ejs') %>
+<%- include('./partials/header.ejs') %>
+<% if (user.role === "SHIPPER") {%>
+    <%- include('./partials/nav_shipper.ejs') %>
+    <% } else { %>
+        <%- include('./partials/nav_driver.ejs') %>
+    <% } %>
+
+<% if (user.role === "SHIPPER") {%>
+    <!-- Form for adding new load  -->
+    <form method="POST" action="/api/loads" class="loads-form">
+        <label for="title" class="form-title">Create a new load</label>
+        <div>
+            <label for="name">name:</label>
+            <input type="name" name="name" placeholder="name" required>
+        </div>
+        <div>
+            <label for="payload">payload:</label>
+            <input type="payload" name="payload" placeholder="payload" required>
+        </div>
+        <div>
+            <label for="pickup_address">pickup address:</label>
+            <input type="pickup_address" name="pickup_address" placeholder="pickup address" required>
+        </div>
+        <div>
+            <label for="delivery_address">delivery address:</label>
+            <input type="delivery_address" name="delivery_address" placeholder="delivery address" required>
+        </div>
+        <div class="dimensions">
+            <label for="dimensions" class="dimensions_title">dimensions</label>
+            <div>
+                <label for="width">width:</label>
+                <input type="width" name="width" placeholder="width" required>
+            </div>
+            <div>
+                <label for="length">length:</label>
+                <input type="length" name="length" placeholder="length" required>
+            </div>
+            <div>
+                <label for="height">height:</label>
+                <input type="height" name="height" placeholder="height" required>
+            </div>
+        </div>
+        <button type="submit" class="button form-button">SAVE LOAD</button>
+    </form>
+<% } %>
+
+<!-- List off loads  -->
+<div class="container">
+    <h2>All loads</h2>
+    <ul class="list">
+    <% if (loads.length > 0) { %>
+        <% loads.forEach(load => { %>
+        <a href="/api/loads/<%= load._id %>">
+            <li class="list__item">
+                <table>
+                    <thead>
+                        <tr>
+                        <th>LOAD:</th>
+                        <th></th>
+                        <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- <tr>
+                            <td></td>
+                            <td class="font-W">_id</td>
+                            <td><%= load._id %></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td class="font-W">created_by</td>
+                            <td><%= load.created_by %></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td class="font-W">assigned_to</td>
+                            <td><%= load.assigned_to %></td>
+                        </tr> -->
+                        <tr>
+                            <td></td>
+                            <td class="font-W">state</td>
+                           <% if (load.state){ %>
+                                <td><%= load.state %></td>
+                           <% } else { %> 
+                            <td> waiting ...</td>
+                           <% } %>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td class="font-W">status</td>
+                            <td><%= load.status %></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td class="font-W">name</td>
+                            <td><%= load.name %></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td class="font-W">payload</td>
+                            <td><%= load.payload %></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td class="font-W">pickup_address</td>
+                            <td><%= load.pickup_address %></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td class="font-W">delivery_address</td>
+                            <td><%= load.delivery_address %></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td class="font-W">dimensions</td>
+                            <td>
+                                width:<%= load.dimensions.width %>; 
+                                length:<%= load.dimensions.length %>; 
+                                height:<%= load.dimensions.height %>
+                            </td>
+                        </tr>
+                        <!-- <tr>
+                            <td></td>
+                            <td class="font-W">logs</td>
+                            <td>
+                                <% load.logs.forEach(elem => { %>
+                                    <br> <%= elem.message%>,<br>
+                                    <%= elem.time %> <br>
+                                <%  }) %>
+                            </td>
+                        </tr> -->
+                        <tr>
+                            <td></td>
+                            <td class="font-W">created_date</td>
+                            <td><%= load.createdDate %></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </li>
+        </a>
+        <% }) %>
+        <% } else {%>
+            <p>There are no loads to display</p>
+        <% } %>
+    </ul>
+</div>
+<%- include('./partials/footer.ejs') %>
